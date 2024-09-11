@@ -1,27 +1,67 @@
-# CiCdAngular
+# CI/CD Angular Project
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.3.
+This project demonstrates Continuous Integration and Continuous Deployment (CI/CD) for an Angular application. It includes GitHub Actions for automated testing and deployment to Vercel.
 
-## Development server
+## Overview
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Branch `new-feature`**: Add new features to the Angular application.
+- **GitHub Workflow**: Set up for automated testing and deployment.
+- **Deployment**: The application is deployed to Vercel.
 
-## Code scaffolding
+## Features
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **New Feature**: Implemented and tested in the `new-feature` branch.
+- **GitHub Actions**: Automated CI/CD pipeline for building, testing, and deploying the application.
+- **Deployment**: Continuous deployment to Vercel.
 
-## Build
+## GitHub Workflows
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Preview Deployment
 
-## Running unit tests
+The workflow defined in `.github/workflows/preview.yaml` handles preview deployments for non-main branches. It includes:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+1. **Test**:
+   - Runs on: `ubuntu-latest`
+   - **Checkout**: Uses `actions/checkout@v3` to fetch the repository.
+   - **Setup Node.js**: Uses `actions/setup-node@v3` with Node.js version 18.
+   - **Install Dependencies**: Runs `npm ci`.
+   - **Run Tests**: Executes `npm run test:prod`.
 
-## Running end-to-end tests
+2. **Deploy-Preview**:
+   - Depends on: `Test`
+   - Runs on: `ubuntu-latest`
+   - **Checkout**: Uses `actions/checkout@v3` to fetch the repository.
+   - **Install Vercel CLI**: Installs Vercel CLI globally.
+   - **Pull Vercel Environment Information**: Uses `vercel pull` with the preview environment.
+   - **Build Project Artifacts**: Uses `vercel build` to build the project.
+   - **Deploy Project Artifacts**: Uses `vercel deploy` to deploy the built project.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Production Deployment
 
-## Further help
+The workflow defined in `.github/workflows/production.yaml` handles production deployments for the `main` branch. It includes:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. **Deploy-Production**:
+   - Runs on: `ubuntu-latest`
+   - **Checkout**: Uses `actions/checkout@v3` to fetch the repository.
+   - **Install Vercel CLI**: Installs Vercel CLI globally.
+   - **Pull Vercel Environment Information**: Uses `vercel pull` with the production environment.
+   - **Build Project Artifacts**: Uses `vercel build` with the `--prod` flag.
+   - **Deploy Project Artifacts**: Uses `vercel deploy` with the `--prod` flag to deploy the project.
+
+## Deployment
+
+The application is automatically deployed to Vercel:
+
+- **Preview Deployments**: Triggered for branches other than `main`.
+- **Production Deployments**: Triggered for the `main` branch.
+
+You can view the live application [here](https://ci-cd-angular.vercel.app).
+
+## Branches
+
+- **`main`**: The main branch with the latest stable code.
+- **`new-feature`**: Contains the new feature implementation. Merged into the `main` branch after successful testing.
+
+## Testing
+
+Tests are automatically run as part of the CI/CD pipeline. Ensure all tests pass before merging changes to the `main` branch.
